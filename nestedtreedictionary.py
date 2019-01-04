@@ -53,6 +53,15 @@ class NestedDictionaryTree():
             godId = f.readline().strip()
             dd = json.load(f)
         return defaultdict(list, dd), godId
+
+    def getRoot(self):
+        return self.root
+
+    def columnCount(self):
+        if self.dd is None:
+            return 0
+        else:
+            return len(self.dd[self.godId][0][1])
         
 
 if __name__ == '__main__':
