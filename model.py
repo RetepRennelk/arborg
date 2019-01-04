@@ -52,3 +52,9 @@ class TreeModel(QAbstractItemModel):
             item = index.internalPointer()
             return item.content[index.column()]
 
+    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            return self.ndt.getRoot().content[section]
+        return None
+
+
