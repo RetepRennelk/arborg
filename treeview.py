@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QTreeView, QShortcut, QFileDialog, QLineEdit
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt, QEvent, QRect
+import config
 
 class TreeView(QTreeView):
     def __init__(self, model):
@@ -14,6 +15,16 @@ class TreeView(QTreeView):
 
         shortcut = QShortcut(QKeySequence("Ctrl+O"), self)
         shortcut.activated.connect(self.openFile)
+
+        self.model().headerDataChanged.connect(self.showInvalidModel)
+
+    def showInvalidModel(self):
+        filename = self.model().filename
+        if filename == "":
+            title = config.windowTitle
+        else:
+            title = config.windowTitle + ": " + filename +" (*)"
+        self.setWindowTitle(title)
 
     def openFile(self):
         fd = QFileDialog(self)
