@@ -13,6 +13,10 @@ class TreeModel(QAbstractItemModel):
         self.ndt = NestedDictionaryTree.createTreeFromFile(filename)
         self.endResetModel()
         self.filename = filename
+
+    def saveFile(self, filename):
+        self.filename = filename
+        self.ndt.writeDD2File(filename)
         
     def columnCount(self, parent=None):
         return self.ndt.columnCount()

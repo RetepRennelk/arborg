@@ -16,22 +16,46 @@ class TreeView(QTreeView):
         shortcut = QShortcut(QKeySequence("Ctrl+O"), self)
         shortcut.activated.connect(self.openFile)
 
-        self.model().headerDataChanged.connect(self.showInvalidModel)
+        shortcut = QShortcut(QKeySequence("Ctrl+S"), self)
+        shortcut.activated.connect(self.saveFile)
 
-    def showInvalidModel(self):
+        self.model().headerDataChanged.connect(self.showModelInvalid)
+
+    def showModelInvalid(self):
         filename = self.model().filename
         if filename == "":
             title = config.windowTitle
         else:
-            title = config.windowTitle + ": " + filename +" (*)"
+            title = config.windowTitle + ": " + filename + " (*)"
+        self.setWindowTitle(title)
+
+    def showModelValid(self):
+        filename = self.model().filename
+        if filename == "":
+            title = config.windowTitle
+        else:
+            title = config.windowTitle + ": " + filename
         self.setWindowTitle(title)
 
     def openFile(self):
         fd = QFileDialog(self)
-        fd.setNameFilter("Arborg files (*.ndt)")
+        fd.setNameFilter(config.nameFilterString)
         if fd.exec():
             filenames = fd.selectedFiles()
             self.model().loadFile(filenames[0])
+            self.showModelValid()
+
+    def saveFile(self):
+        fd = QFileDialog(self)
+        fd.setNameFilter(config.nameFilterString)
+        filename = self.model().filename
+        if filename == "":
+            if fd.exec():
+                filename = fd.selectedFiles()[0]
+                if not filename.endswith(config.fileEnding):
+                    filename += config.fileEnding
+        self.model().saveFile(filename)
+        self.showModelValid()
 
     def sectionClicked(self, index):
         rect = QRect()
