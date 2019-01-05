@@ -5,12 +5,15 @@ class TreeModel(QAbstractItemModel):
     def __init__(self):
         super().__init__()
         self.ndt = NestedDictionaryTree()
-
+        self.ndt.initialise(["Outline", "Comment"])
+        self.filename = ""
+        
     def loadFile(self, filename):
         self.beginResetModel()
         self.ndt = NestedDictionaryTree.createTreeFromFile(filename)
         self.endResetModel()
-
+        self.filename = filename
+        
     def columnCount(self, parent=None):
         return self.ndt.columnCount()
 

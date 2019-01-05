@@ -16,6 +16,11 @@ class NestedDictionaryTree():
             godNode = Node()
             self.godId = godNode.getId()
 
+    def initialise(self, columnNames):
+        self.root = Node(None, columnNames)
+        self.dd = defaultdict(list)
+        self.dd[self.godId].append(self.root.toList())
+            
     def createNDTfromTree(self, root):
         '''Based on the root-node a default-dict is created 
         which can be saved to disk and later on be loaded.
