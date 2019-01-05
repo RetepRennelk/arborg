@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QTreeView, QShortcut, QFileDialog, QLineEdit
+from PyQt5.QtWidgets import QTreeView, QShortcut, QFileDialog, QLineEdit, \
+    QAbstractItemView
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt, QEvent, QRect
 import config
@@ -20,6 +21,9 @@ class TreeView(QTreeView):
         shortcut.activated.connect(self.saveFile)
 
         self.model().headerDataChanged.connect(self.showModelInvalid)
+
+        shortcut = QShortcut(QKeySequence("Ctrl+B"), self)
+        shortcut.activated.connect(self.insertSiblingBelow)
 
     def showModelInvalid(self):
         filename = self.model().filename
@@ -88,5 +92,11 @@ class TreeView(QTreeView):
 
         return super().eventFilter(obj, ev)
 
+    def insertSiblingBelow(self):
+        currentIndex = self.currentIndex()
+        lastEditedIndex = self.model().insertSiblingBelow(currentIndex)
+        self.setCurrentIndex(lastEditedIndex)
+        self.edit(lastEditedIndex, QAbstractItemView.AllEditTriggers, None)
+        
 
 

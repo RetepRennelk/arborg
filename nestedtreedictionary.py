@@ -33,7 +33,10 @@ class NestedDictionaryTree():
             for child in parent.getChildren():
                 dd[parent.getId()].append(child.toList())
                 qu.append(child)
-        self.root, self.dd = root, dd
+        return root, dd
+
+    def updateNDTfromTree(self):
+        root, self.dd = self.createNDTfromTree(self.root)
 
     @staticmethod
     def createTreeFromFile(filename):
@@ -74,6 +77,23 @@ class NestedDictionaryTree():
             self.dd[self.godId][0][1][section] = value
             return True
         return False
+
+    def getEmptyAndValidNode(self):
+        '''The item identfier is set. Parent and content 
+        are not set and must be provided externally.'''
+        columnCount = self.columnCount()
+        return Node(None, ['???']*columnCount)
+
+    def insertSiblingBelow(self, node):
+        parent = node.getParent()
+        if parent is None:
+            parent = self.getRoot()
+        newNode = self.getEmptyAndValidNode()
+        newNode.parent = parent
+        row = -1
+        if parent.childrenCount() > 0:
+            row = parent.children.index(node)
+        parent.children.insert(row+1, newNode)
         
 
 if __name__ == '__main__':

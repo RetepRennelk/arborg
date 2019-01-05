@@ -16,6 +16,7 @@ class TreeModel(QAbstractItemModel):
 
     def saveFile(self, filename):
         self.filename = filename
+        self.ndt.updateNDTfromTree()
         self.ndt.writeDD2File(filename)
         
     def columnCount(self, parent=None):
@@ -77,7 +78,27 @@ class TreeModel(QAbstractItemModel):
             self.headerDataChanged.emit(orientation, section, section)
         return flag # True would mean data was changed
 
+    def getItem(self, index):
+        if index.isValid():
+            item = index.internalPointer()
+            if item:
+                return item
+        return self.ndt.getRoot()
 
+    def insertSiblingBelow(self, index):
+        row = index.row()
+        self.beginInsertRows(index.parent(), row+1, row+1)
+        item = self.getItem(index)
+        self.ndt.insertSiblingBelow(item)
+        self.insertRow(row+1, index.parent())
+        self.endInsertRows()
+        
+        if row == -1 and index.column() == -1:
+            lastEditedIndex = self.index(0, 0, QModelIndex())
+        else:
+            lastEditedIndex = self.index(row+1, index.column(), index.parent())
+        return lastEditedIndex
+        
 
 
 
