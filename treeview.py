@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QTreeView, QShortcut, QFileDialog, QLineEdit
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtCore import QEvent, QRect
+from PyQt5.QtCore import Qt, QEvent, QRect
 
 class TreeView(QTreeView):
     def __init__(self, model):
@@ -42,11 +42,15 @@ class TreeView(QTreeView):
         self.he = he
 
     def eventFilter(self, obj, ev):
-        if obj == self.he and ev.type() == QEvent.FocusOut:
-            header = self.he.parentWidget().parentWidget()
-            header.model().setHeaderData(self.he_index, header.orientation(), self.he.text())
-            self.he.deleteLater()
-            self.he = None
+        if obj == self.he:
+            sw1 = ev.type() == QEvent.FocusOut
+            sw2 = ev.type() == QEvent.KeyPress and ev.key() == Qt.Key_Return
+            if sw1 or sw2:
+                header = self.he.parentWidget().parentWidget()
+                header.model().setHeaderData(self.he_index, header.orientation(), self.he.text())
+                self.he.deleteLater()
+                self.he = None
+
         return super().eventFilter(obj, ev)
 
 

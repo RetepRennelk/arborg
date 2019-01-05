@@ -64,6 +64,10 @@ class TreeModel(QAbstractItemModel):
 
     def setHeaderData(self, section, orientation, value):
         flag = self.ndt.setHeaderData(section, value)
+        if flag:
+            # The documentation demands the signal headerDataChanged to be emitted
+            # when the data has changed.
+            self.headerDataChanged.emit(orientation, section, section)
         return flag # True would mean data was changed
 
 
