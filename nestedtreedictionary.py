@@ -62,6 +62,13 @@ class NestedDictionaryTree():
             return 0
         else:
             return len(self.dd[self.godId][0][1])
+
+    def setHeaderData(self, section, value):
+        if self.root.content[section] != value:
+            self.root.content[section] = value
+            self.dd[self.godId][0][1][section] = value
+            return True
+        return False
         
 
 if __name__ == '__main__':

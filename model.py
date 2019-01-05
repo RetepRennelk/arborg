@@ -57,4 +57,16 @@ class TreeModel(QAbstractItemModel):
             return self.ndt.getRoot().content[section]
         return None
 
+    def flags(self, index):
+        if not index.isValid():
+            return 0
+        return Qt.ItemIsEditable | super().flags(index)
+
+    def setHeaderData(self, section, orientation, value):
+        flag = self.ndt.setHeaderData(section, value)
+        return flag # True would mean data was changed
+
+
+
+
 
