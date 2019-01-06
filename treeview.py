@@ -3,12 +3,13 @@ from PyQt5.QtWidgets import QTreeView, QShortcut, QFileDialog, QLineEdit, \
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt, QEvent, QRect
 import config
+from styleditemdelegate import StyledItemDelegate
 
 class TreeView(QTreeView):
     def __init__(self, model):
         super().__init__()
         self.setModel(model)
-        
+        self.setItemDelegate(StyledItemDelegate(self))
         self.lastEditedIndex = None
 
         self.he = None
