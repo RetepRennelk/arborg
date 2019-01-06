@@ -99,6 +99,21 @@ class TreeModel(QAbstractItemModel):
             lastEditedIndex = self.index(row+1, index.column(), index.parent())
         return lastEditedIndex
         
+    def insertChildBelow(self, index):
+        row = index.row()
+        self.beginInsertRows(index, 0, 0)
+        item = self.getItem(index)
+        
+        self.ndt.insertChildBelow(item)
+        self.insertRow(0, index)
+        
+        self.endInsertRows()
+        
+        if row == -1 and index.column() == -1:
+            lastEditedIndex = self.index(0, 0, QModelIndex())
+        else:
+            lastEditedIndex = self.index(0, index.column(), index)
+        return lastEditedIndex
 
 
 

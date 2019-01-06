@@ -94,6 +94,12 @@ class NestedDictionaryTree():
         if parent.childrenCount() > 0:
             row = parent.children.index(node)
         parent.children.insert(row+1, newNode)
+
+    def insertChildBelow(self, item):
+        newNode = self.getEmptyAndValidNode()
+        newNode.parent = item
+        item.children.insert(0, newNode)
+        
         
 
 if __name__ == '__main__':

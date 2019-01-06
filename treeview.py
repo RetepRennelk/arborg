@@ -25,6 +25,9 @@ class TreeView(QTreeView):
         shortcut = QShortcut(QKeySequence("Ctrl+B"), self)
         shortcut.activated.connect(self.insertSiblingBelow)
 
+        shortcut = QShortcut(QKeySequence("Ctrl+Shift+B"), self)
+        shortcut.activated.connect(self.insertChildBelow)
+
     def showModelInvalid(self):
         filename = self.model().filename
         if filename == "":
@@ -97,6 +100,11 @@ class TreeView(QTreeView):
         lastEditedIndex = self.model().insertSiblingBelow(currentIndex)
         self.setCurrentIndex(lastEditedIndex)
         self.edit(lastEditedIndex, QAbstractItemView.AllEditTriggers, None)
-        
+
+    def insertChildBelow(self):
+        currentIndex = self.currentIndex()
+        lastEditedIndex = self.model().insertChildBelow(currentIndex)
+        self.setCurrentIndex(lastEditedIndex)
+        self.edit(lastEditedIndex, QAbstractItemView.AllEditTriggers, None)
 
 
