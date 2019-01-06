@@ -101,6 +101,12 @@ class TreeView(QTreeView):
                 header.model().setHeaderData(self.he_index, header.orientation(), self.he.text())
                 self.he.deleteLater()
                 self.he = None
+        else:
+            sw = ev.type() == QEvent.KeyPress and ev.key() == Qt.Key_F2
+            if sw:
+                self.edit(self.currentIndex(), QAbstractItemView.AllEditTriggers, None)
+                return True
+
 
         return super().eventFilter(obj, ev)
 
@@ -128,4 +134,6 @@ class TreeView(QTreeView):
             self.model().deleteCell(self.lastEditedIndex)
         self.lastEditedIndex = None
 
+    def setModelData(self, index, newTxt, oldTxt, role):
+        self.model().setData(index, newTxt, role)
 

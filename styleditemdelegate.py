@@ -14,12 +14,14 @@ class StyledItemDelegate(QStyledItemDelegate):
 
     def setEditorData(self, editor, index):
         value = index.model().data(index, Qt.EditRole)
+        self.oldTxt = value
         editor.setPlainText(value)
         editor.moveCursor(QTextCursor.End)
 
     def setModelData(self, editor, model, index):
-        txt = editor.toPlainText()
-        model.setData(index, txt, Qt.EditRole)
+        newTxt = editor.toPlainText()
+        treeView = self.parent()
+        treeView.setModelData(index, newTxt, self.oldTxt, Qt.EditRole)
 
     def updateEditorGeometry(self, editor, option, index):
         editor.setGeometry(option.rect)
