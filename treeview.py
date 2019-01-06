@@ -8,11 +8,17 @@ class TreeView(QTreeView):
     def __init__(self, model):
         super().__init__()
         self.setModel(model)
+        
+        self.lastEditedIndex = None
+
         self.he = None
         self.he_index = None
 
         self.header().setSectionsClickable(True)
         self.header().sectionClicked.connect(self.sectionClicked)
+
+        shortcut = QShortcut(QKeySequence("Delete"), self)
+        shortcut.activated.connect(self.deleteCell)
 
         shortcut = QShortcut(QKeySequence("Ctrl+O"), self)
         shortcut.activated.connect(self.openFile)
@@ -21,6 +27,7 @@ class TreeView(QTreeView):
         shortcut.activated.connect(self.saveFile)
 
         self.model().headerDataChanged.connect(self.showModelInvalid)
+        self.model().layoutChanged.connect(self.showModelInvalid)
 
         shortcut = QShortcut(QKeySequence("Ctrl+B"), self)
         shortcut.activated.connect(self.insertSiblingBelow)
@@ -98,13 +105,25 @@ class TreeView(QTreeView):
     def insertSiblingBelow(self):
         currentIndex = self.currentIndex()
         lastEditedIndex = self.model().insertSiblingBelow(currentIndex)
+        self.lastEditedIndex = lastEditedIndex
         self.setCurrentIndex(lastEditedIndex)
         self.edit(lastEditedIndex, QAbstractItemView.AllEditTriggers, None)
 
     def insertChildBelow(self):
         currentIndex = self.currentIndex()
         lastEditedIndex = self.model().insertChildBelow(currentIndex)
+        self.lastEditedIndex = lastEditedIndex
         self.setCurrentIndex(lastEditedIndex)
         self.edit(lastEditedIndex, QAbstractItemView.AllEditTriggers, None)
+
+    def deleteCell(self, index=None):
+        if index is None:
+            index = self.currentIndex()
+        self.model().deleteCell(index)
+
+    def deleteLastEditedIndex(self):
+        if self.lastEditedIndex:
+            self.model().deleteCell(self.lastEditedIndex)
+        self.lastEditedIndex = None
 
 

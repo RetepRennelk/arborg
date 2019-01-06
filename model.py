@@ -115,5 +115,22 @@ class TreeModel(QAbstractItemModel):
             lastEditedIndex = self.index(0, index.column(), index)
         return lastEditedIndex
 
+    def setData(self, index, txt, role):
+        item = index.internalPointer()
+        oldTxt = item.content[index.column()]
+        if oldTxt != txt:
+            item.content[index.column()] = txt
+            super().setData(index, txt, role)
+            self.layoutChanged.emit()
+            return True
+        return False
+
+    def deleteCell(self, index):
+        row = index.row()
+        self.beginRemoveRows(index.parent(), row, row)
+        item = index.internalPointer()
+        item.parent.removeChild(item)
+        self.removeRow(row, index.parent())
+        self.endRemoveRows()
 
 
