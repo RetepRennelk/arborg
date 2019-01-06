@@ -43,7 +43,5 @@ class StyledItemDelegate(QStyledItemDelegate):
         if event.type() == QEvent.KeyPress:
             if event.key() == Qt.Key_Escape:
                 self.commit_and_close_editor()
-                treeView = self.parent()
-                treeView.deleteLastEditedIndex()
                 return False
         return super().eventFilter(editor, event)
