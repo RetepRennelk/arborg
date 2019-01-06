@@ -69,8 +69,9 @@ class TreeView(QTreeView):
                 filename = fd.selectedFiles()[0]
                 if not filename.endswith(config.fileEnding):
                     filename += config.fileEnding
-        self.model().saveFile(filename)
-        self.showModelValid()
+        if filename != "":
+            self.model().saveFile(filename)
+            self.showModelValid()
 
     def sectionClicked(self, index):
         rect = QRect()
