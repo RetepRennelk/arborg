@@ -141,7 +141,6 @@ class TreeView(QTreeView):
             index = self.currentIndex()
         delecteCellCommand = DeleteCellCommand(self.model(), index)
         self.undoStack.push(delecteCellCommand)
-        #self.model().deleteCell(index)
 
     def deleteLastEditedIndex(self):
         if self.lastEditedIndex:
