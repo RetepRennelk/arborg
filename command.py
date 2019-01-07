@@ -47,7 +47,7 @@ class DeleteCellCommand(UndoCommand):
     def redo(self):
         self.deleteIndex()
 
-class InsertSiblingCommand(UndoCommand):
+class InsertSiblingBelowCommand(UndoCommand):
     def __init__(self, model, index, treeView):
         super().__init__(model, index)
         self.siblingNode = None
