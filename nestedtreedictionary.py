@@ -97,10 +97,12 @@ class NestedDictionaryTree():
         parent.children.insert(row+1, siblingNode)
         return siblingNode
 
-    def insertChildBelow(self, item):
-        newNode = self.getEmptyAndValidNode()
-        newNode.parent = item
-        item.children.insert(0, newNode)
+    def insertChildBelow(self, item, childNode=None):
+        if childNode is None:
+            childNode = self.getEmptyAndValidNode()
+            childNode.parent = item
+        item.children.insert(0, childNode)
+        return childNode
         
         
 
