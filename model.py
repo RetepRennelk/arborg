@@ -85,11 +85,11 @@ class TreeModel(QAbstractItemModel):
                 return item
         return self.ndt.getRoot()
 
-    def insertSiblingBelow(self, index):
+    def insertSiblingBelow(self, index, siblingNode=None):
         row = index.row()
         self.beginInsertRows(index.parent(), row+1, row+1)
         item = self.getItem(index)
-        self.ndt.insertSiblingBelow(item)
+        siblingNode = self.ndt.insertSiblingBelow(item, siblingNode)
         self.insertRow(row+1, index.parent())
         self.endInsertRows()
         
@@ -97,7 +97,7 @@ class TreeModel(QAbstractItemModel):
             lastEditedIndex = self.index(0, 0, QModelIndex())
         else:
             lastEditedIndex = self.index(row+1, index.column(), index.parent())
-        return lastEditedIndex
+        return lastEditedIndex, siblingNode
         
     def insertChildBelow(self, index):
         row = index.row()

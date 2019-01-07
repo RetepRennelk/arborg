@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QUndoCommand
+from PyQt5.QtWidgets import QUndoCommand, QAbstractItemView
 
 
 class UndoCommand(QUndoCommand):
@@ -47,3 +47,21 @@ class DeleteCellCommand(UndoCommand):
     def redo(self):
         self.deleteIndex()
 
+class InsertSiblingCommand(UndoCommand):
+    def __init__(self, model, index, treeView):
+        super().__init__(model, index)
+        self.siblingNode = None
+        self.treeView = treeView
+
+    def undo(self):
+        self.model.deleteCell(self.lastEditedIndex)
+
+    def redo(self):
+        # Ensure that the same node is reinserted once it has been created.
+        if self.siblingNode is None:
+            self.lastEditedIndex, self.siblingNode = self.model.insertSiblingBelow(self.index)
+        else:
+            self.model.insertSiblingBelow(self.index, self.siblingNode)
+        self.treeView.setCurrentIndex(self.lastEditedIndex)
+    
+        

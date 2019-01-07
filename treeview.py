@@ -4,7 +4,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt, QEvent, QRect
 import config
 from styleditemdelegate import StyledItemDelegate
-from command import EditCommand, DeleteCellCommand
+from command import EditCommand, DeleteCellCommand, InsertSiblingCommand
 
 class TreeView(QTreeView):
     def __init__(self, model):
@@ -123,11 +123,8 @@ class TreeView(QTreeView):
         return super().eventFilter(obj, ev)
 
     def insertSiblingBelow(self):
-        currentIndex = self.currentIndex()
-        lastEditedIndex = self.model().insertSiblingBelow(currentIndex)
-        self.lastEditedIndex = lastEditedIndex
-        self.setCurrentIndex(lastEditedIndex)
-        self.edit(lastEditedIndex, QAbstractItemView.AllEditTriggers, None)
+        insertSiblingCommand = InsertSiblingCommand(self.model(), self.currentIndex(), self)
+        self.undoStack.push(insertSiblingCommand)
 
     def insertChildBelow(self):
         currentIndex = self.currentIndex()
