@@ -4,8 +4,8 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt, QEvent, QRect
 import config
 from styleditemdelegate import StyledItemDelegate
-from command import EditCommand, DeleteCellCommand, InsertSiblingBelowCommand, \
-    InsertChildBelowCommand
+from command import EditCommand, DeleteCellCommand, InsertSiblingAboveCommand, \
+    InsertSiblingBelowCommand, InsertChildBelowCommand
 
 class TreeView(QTreeView):
     def __init__(self, model):
@@ -31,6 +31,9 @@ class TreeView(QTreeView):
 
         self.model().headerDataChanged.connect(self.showModelInvalid)
         self.model().layoutChanged.connect(self.showModelInvalid)
+
+        shortcut = QShortcut(QKeySequence("Ctrl+A"), self)
+        shortcut.activated.connect(self.insertSiblingAbove)
 
         shortcut = QShortcut(QKeySequence("Ctrl+B"), self)
         shortcut.activated.connect(self.insertSiblingBelow)
@@ -122,6 +125,10 @@ class TreeView(QTreeView):
 
 
         return super().eventFilter(obj, ev)
+
+    def insertSiblingAbove(self):
+        insertSiblingAboveCommand = InsertSiblingAboveCommand(self.model(), self.currentIndex(), self)
+        self.undoStack.push(insertSiblingAboveCommand)
 
     def insertSiblingBelow(self):
         insertSiblingBelowCommand = InsertSiblingBelowCommand(self.model(), self.currentIndex(), self)

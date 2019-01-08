@@ -47,6 +47,20 @@ class DeleteCellCommand(UndoCommand):
     def redo(self):
         self.deleteIndex()
 
+class InsertSiblingAboveCommand(UndoCommand):
+    def __init__(self, model, index, treeView):
+        super().__init__(model, index)
+        self.siblingNode = None
+        self.treeView = treeView
+
+    def undo(self):
+        self.model.deleteCell(self.lastEditedIndex)
+
+    def redo(self):
+        # Ensure that the same node is reinserted once it has been created.
+        self.lastEditedIndex, self.siblingNode = self.model.insertSiblingAbove(self.index, self.siblingNode)
+        self.treeView.setCurrentIndex(self.lastEditedIndex)
+
 class InsertSiblingBelowCommand(UndoCommand):
     def __init__(self, model, index, treeView):
         super().__init__(model, index)

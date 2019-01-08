@@ -84,6 +84,19 @@ class NestedDictionaryTree():
         columnCount = self.columnCount()
         return Node(None, ['???']*columnCount)
 
+    def insertSiblingAbove(self, node, siblingNode=None):
+        parent = node.getParent()
+        if parent is None:
+            parent = self.getRoot()
+        if siblingNode is None:
+            siblingNode = self.getEmptyAndValidNode()
+            siblingNode.parent = parent
+        row = 0
+        if parent.childrenCount() > 0:
+            row = parent.children.index(node)
+        parent.children.insert(row, siblingNode)
+        return siblingNode
+
     def insertSiblingBelow(self, node, siblingNode=None):
         parent = node.getParent()
         if parent is None:
