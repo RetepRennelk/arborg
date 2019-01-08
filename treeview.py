@@ -12,6 +12,7 @@ class TreeView(QTreeView):
         super().__init__()
         self.setModel(model)
         self.setItemDelegate(StyledItemDelegate(self))
+        self.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.lastEditedIndex = None
 
         self.he = None
@@ -107,6 +108,25 @@ class TreeView(QTreeView):
         he.setText(txt)
         self.he_index = index
         self.he = he
+
+    def keyPressEvent(self, event):
+        currentIndex = self.currentIndex()
+        if not currentIndex.isValid():
+            return
+        m = self.model()
+        if event.key() == Qt.Key_Left:
+            parentIdx = m.parent(currentIndex)
+            if currentIndex.column() > 0:
+                newIndex = m.index(currentIndex.row(), currentIndex.column()-1, parentIdx)
+                self.setCurrentIndex(newIndex)
+            return
+        elif event.key() == Qt.Key_Right:
+            parentIdx = m.parent(currentIndex)
+            if currentIndex.column() < m.columnCount()-1:
+                newIndex = m.index(currentIndex.row(), currentIndex.column()+1, parentIdx)
+                self.setCurrentIndex(newIndex)
+            return
+        super().keyPressEvent(event)
 
     def eventFilter(self, obj, ev):
         if obj == self.he:
