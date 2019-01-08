@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QTreeView, QShortcut, QFileDialog, QLineEdit, \
     QAbstractItemView, QUndoStack
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtCore import Qt, QEvent, QRect
+from PyQt5.QtCore import Qt, QEvent, QRect, QItemSelectionModel
 import config
 from styleditemdelegate import StyledItemDelegate
 from command import EditCommand, DeleteCellCommand, InsertSiblingAboveCommand, \
@@ -42,6 +42,9 @@ class TreeView(QTreeView):
         shortcut = QShortcut(QKeySequence("Ctrl+Shift+B"), self)
         shortcut.activated.connect(self.insertChildBelow)
 
+        shortcut = QShortcut(QKeySequence("Ctrl+Space"), self)
+        shortcut.activated.connect(self.selectRow)
+
         self.initUndo()
         
     def initUndo(self):
@@ -52,6 +55,14 @@ class TreeView(QTreeView):
 
         shortcut = QShortcut(QKeySequence.Redo, self)
         shortcut.activated.connect(self.undoStack.redo)
+
+    def selectRow(self):
+        sm = self.selectionModel()
+        format = QItemSelectionModel.Select | QItemSelectionModel.Rows | QItemSelectionModel.NoUpdate
+        sm.select(self.currentIndex(), format)
+        newIndex = self.indexBelow(self.currentIndex())
+        sm.setCurrentIndex(newIndex, format)
+
 
     def showModelInvalid(self):
         filename = self.model().filename
