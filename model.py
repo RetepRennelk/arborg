@@ -1,23 +1,36 @@
-from PyQt5.QtCore import QAbstractItemModel, QModelIndex, Qt
+from PyQt5.QtCore import QAbstractItemModel, QModelIndex, Qt, \
+    pyqtSignal
 from nestedtreedictionary import NestedDictionaryTree
 
 class TreeModel(QAbstractItemModel):
+    fileModified = pyqtSignal(bool)
     def __init__(self):
         super().__init__()
         self.ndt = NestedDictionaryTree()
         self.ndt.initialise(["Outline", "Comment"])
         self.filename = ""
+        self.fileModifiedFlag = False
         
     def loadFile(self, filename):
         self.beginResetModel()
         self.ndt = NestedDictionaryTree.createTreeFromFile(filename)
         self.endResetModel()
         self.filename = filename
+        self.fileModifiedFlag = False
 
     def saveFile(self, filename):
         self.filename = filename
         self.ndt.updateNDTfromTree()
         self.ndt.writeDD2File(filename)
+        self.fileModifiedFlag = False
+
+    def setFileModified(self, flag):
+        if flag != self.fileModifiedFlag:
+            self.fileModified.emit(flag)
+        self.fileModifiedFlag = flag
+        
+    def getFileModified(self):
+        return self.fileModifiedFlag
         
     def columnCount(self, parent=None):
         return self.ndt.columnCount()
@@ -135,7 +148,7 @@ class TreeModel(QAbstractItemModel):
         if oldTxt != txt:
             item.content[index.column()] = txt
             super().setData(index, txt, role)
-            self.layoutChanged.emit()
+            self.dataChanged.emit(index, index, [Qt.EditRole])
             return True
         return False
 

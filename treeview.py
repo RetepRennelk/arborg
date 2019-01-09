@@ -30,8 +30,10 @@ class TreeView(QTreeView):
         shortcut = QShortcut(QKeySequence("Ctrl+S"), self)
         shortcut.activated.connect(self.saveFile)
 
-        self.model().headerDataChanged.connect(self.showModelInvalid)
+        """ self.model().headerDataChanged.connect(self.showModelInvalid)
         self.model().layoutChanged.connect(self.showModelInvalid)
+        self.model().dataChanged.connect(self.showModelInvalid) """
+        self.model().fileModified.connect(self.showModelValidity)
 
         shortcut = QShortcut(QKeySequence("Ctrl+A"), self)
         shortcut.activated.connect(self.insertSiblingAbove)
@@ -78,6 +80,16 @@ class TreeView(QTreeView):
             title = config.windowTitle
         else:
             title = config.windowTitle + ": " + filename
+        self.setWindowTitle(title)
+
+    def showModelValidity(self, flag):
+        filename = self.model().filename
+        if filename == "":
+            title = config.windowTitle
+        else:
+            title = config.windowTitle + ": " + filename
+        if flag:
+            title += " (*)"
         self.setWindowTitle(title)
 
     def openFile(self):
