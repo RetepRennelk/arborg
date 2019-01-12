@@ -174,3 +174,15 @@ class TreeModel(QAbstractItemModel):
         for i in range(N_rows):
             parent.moveChildUp(row+i)
         self.endMoveRows()
+        return self.index(row-1, index.column(), parentIndex)
+
+    def moveNodesDown(self, index, N_rows):
+        row = index.row()
+        parentIndex = index.parent()
+        self.beginMoveRows(parentIndex, row, row+N_rows-1, parentIndex, row+N_rows+1)
+        item = self.getItem(index)
+        parent = item.getParent()
+        for i in range(N_rows):
+            parent.moveChildUp(row+N_rows-i)
+        self.endMoveRows()
+        return self.index(row+1, index.column(), parentIndex)

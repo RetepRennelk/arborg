@@ -112,11 +112,22 @@ class MoveChildrenUpCommand(UndoCommand):
 
     def undo(self):
         super().undo()
+        self.model.moveNodesDown(self.lastEditedIndex, self.N_rows)
 
     def redo(self):
         super().redo()
-        self.moveNodesUp(self.index, self.N_rows)
+        self.lastEditedIndex = self.model.moveNodesUp(self.index, self.N_rows)
 
-    def moveNodesUp(self, index, N_rows):
-        self.model.moveNodesUp(index, N_rows)
 
+class MoveChildrenDownCommand(UndoCommand):
+    def __init__(self, model, index, N_rows):
+        super().__init__(model, index)
+        self.N_rows = N_rows
+
+    def undo(self):
+        super().undo()
+        self.model.moveNodesUp(self.lastEditedIndex, self.N_rows)
+
+    def redo(self):
+        super().redo()
+        self.lastEditedIndex = self.model.moveNodesDown(self.index, self.N_rows)

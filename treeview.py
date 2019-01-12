@@ -5,7 +5,8 @@ from PyQt5.QtCore import Qt, QEvent, QRect, QItemSelectionModel
 import config
 from styleditemdelegate import StyledItemDelegate
 from command import EditCommand, DeleteCellCommand, InsertSiblingAboveCommand, \
-    InsertSiblingBelowCommand, InsertChildBelowCommand, MoveChildrenUpCommand
+    InsertSiblingBelowCommand, InsertChildBelowCommand, MoveChildrenUpCommand, \
+    MoveChildrenDownCommand
 
 class TreeView(QTreeView):
     def __init__(self, model):
@@ -50,6 +51,9 @@ class TreeView(QTreeView):
 
         shortcut = QShortcut(QKeySequence("Shift+Up"), self)
         shortcut.activated.connect(self.moveNodesUp)
+
+        shortcut = QShortcut(QKeySequence("Shift+Down"), self)
+        shortcut.activated.connect(self.moveNodesDown)
 
         self.initUndo()
         
@@ -209,3 +213,13 @@ class TreeView(QTreeView):
         if self.model().areAllParentsIdentical(indices):
             moveChildrenUpCommand = MoveChildrenUpCommand(self.model(), indices[0], N_rows)
             self.undoStack.push(moveChildrenUpCommand)
+
+    def moveNodesDown(self):
+        indices = self.selectionModel().selectedRows()
+        if len(indices) == 0:
+            indices = [self.currentIndex()]
+        N_rows = len(indices)
+        if self.model().areAllParentsIdentical(indices):
+            moveChildrenDownCommand = MoveChildrenDownCommand(self.model(), indices[0], N_rows)
+            self.undoStack.push(moveChildrenDownCommand)
+            
