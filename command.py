@@ -105,3 +105,18 @@ class InsertChildBelowCommand(UndoCommand):
         self.lastEditedIndex, self.siblingNode = self.model.insertChildBelow(self.index, self.siblingNode)
         self.treeView.setCurrentIndex(self.lastEditedIndex)
 
+class MoveChildrenUpCommand(UndoCommand):
+    def __init__(self, model, index, N_rows):
+        super().__init__(model, index)
+        self.N_rows = N_rows
+
+    def undo(self):
+        super().undo()
+
+    def redo(self):
+        super().redo()
+        self.moveNodesUp(self.index, self.N_rows)
+
+    def moveNodesUp(self, index, N_rows):
+        self.model.moveNodesUp(index, N_rows)
+
