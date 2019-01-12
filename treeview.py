@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QTreeView, QShortcut, QFileDialog, QLineEdit, \
-    QAbstractItemView, QUndoStack
+    QAbstractItemView, QUndoStack, QHeaderView
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt, QEvent, QRect, QItemSelectionModel
 import config
@@ -19,7 +19,8 @@ class TreeView(QTreeView):
         self.he_index = None
 
         self.header().setSectionsClickable(True)
-        self.header().sectionClicked.connect(self.sectionClicked)
+        self.header().sectionClicked.connect(self.sectionClicked) 
+        self.header().setSectionResizeMode(QHeaderView.Stretch)
 
         shortcut = QShortcut(QKeySequence("Delete"), self)
         shortcut.activated.connect(self.deleteCell)
