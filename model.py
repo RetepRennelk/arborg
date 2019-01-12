@@ -165,26 +165,12 @@ class TreeModel(QAbstractItemModel):
         flag = all(p==parents[0] for p in parents)
         return flag
 
-    def moveNodesUp(self, indices):
-        if not self.areAllParentsIdentical(indices):
-            return
-        index = indices[0]
+    def moveNodesUp(self, index, N_rows):
         row = index.row()
-        for i in range(len(indices)):
-            updatedIndex = self.moveNodeUp(index)
-            index = updatedIndex.siblingAtRow(row+i+1)
-
-    def moveNodeUp(self, index):
-        row = index.row()
-        if row == 0:
-            return None
         parentIndex = index.parent()
-        self.beginMoveRows(parentIndex, row, row, parentIndex, row-1)
+        self.beginMoveRows(parentIndex, row, row+N_rows-1, parentIndex, row-1)
         item = self.getItem(index)
         parent = item.getParent()
-        parent.moveChildUp(row)
+        for i in range(N_rows):
+            parent.moveChildUp(row+i)
         self.endMoveRows()
-        return self.index(row-1, 0, parentIndex)
-
-
-

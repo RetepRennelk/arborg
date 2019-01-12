@@ -49,7 +49,7 @@ class TreeView(QTreeView):
         shortcut.activated.connect(self.selectRow)
 
         shortcut = QShortcut(QKeySequence("Shift+Up"), self)
-        shortcut.activated.connect(self.moveNodeUp)
+        shortcut.activated.connect(self.moveNodesUp)
 
         self.initUndo()
         
@@ -184,11 +184,6 @@ class TreeView(QTreeView):
     def insertChildBelow(self):
         insertChildBelowCommand = InsertChildBelowCommand(self.model(), self.currentIndex(), self)
         self.undoStack.push(insertChildBelowCommand)
-        """ currentIndex = self.currentIndex()
-        lastEditedIndex = self.model().insertChildBelow(currentIndex)
-        self.lastEditedIndex = lastEditedIndex
-        self.setCurrentIndex(lastEditedIndex)
-        self.edit(lastEditedIndex, QAbstractItemView.AllEditTriggers, None) """
 
     def deleteCell(self, index=None):
         if index is None:
@@ -206,10 +201,11 @@ class TreeView(QTreeView):
             editCommand = EditCommand(self.model(), index, newTxt, oldTxt)
             self.undoStack.push(editCommand)
 
-    def moveNodeUp(self):
+    def moveNodesUp(self):
         indices = self.selectionModel().selectedRows()
         if len(indices) == 0:
             indices = [self.currentIndex()]
-        self.model().moveNodesUp(indices)
+        if self.model().areAllParentsIdentical(indices):
+            self.model().moveNodesUp(indices[0], len(indices))
     
 
