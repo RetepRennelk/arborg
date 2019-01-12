@@ -160,4 +160,31 @@ class TreeModel(QAbstractItemModel):
         self.removeRow(row, index.parent())
         self.endRemoveRows()
 
+    def areAllParentsIdentical(self, indices):
+        parents = [i.parent() for i in indices]
+        flag = all(p==parents[0] for p in parents)
+        return flag
+
+    def moveNodesUp(self, indices):
+        if not self.areAllParentsIdentical(indices):
+            return
+        index = indices[0]
+        row = index.row()
+        for i in range(len(indices)):
+            updatedIndex = self.moveNodeUp(index)
+            index = updatedIndex.siblingAtRow(row+i+1)
+
+    def moveNodeUp(self, index):
+        row = index.row()
+        if row == 0:
+            return None
+        parentIndex = index.parent()
+        self.beginMoveRows(parentIndex, row, row, parentIndex, row-1)
+        item = self.getItem(index)
+        parent = item.getParent()
+        parent.moveChildUp(row)
+        self.endMoveRows()
+        return self.index(row-1, 0, parentIndex)
+
+
 

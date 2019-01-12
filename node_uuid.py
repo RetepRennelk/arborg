@@ -33,6 +33,13 @@ class Node():
     def getId(self):
         return self.id
 
+    def moveChildUp(self, idx):
+        if idx > 0:
+            self.children[idx], self.children[idx-1] = self.children[idx-1], self.children[idx]
+            return True
+        return False
+    
+
 if __name__ == '__main__':
     root = Node(None, ['column', 'comment'])
     parent1 = Node(root, ['AAA', 'aaa'])

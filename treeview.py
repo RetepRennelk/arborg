@@ -48,6 +48,9 @@ class TreeView(QTreeView):
         shortcut = QShortcut(QKeySequence("Ctrl+Space"), self)
         shortcut.activated.connect(self.selectRow)
 
+        shortcut = QShortcut(QKeySequence("Shift+Up"), self)
+        shortcut.activated.connect(self.moveNodeUp)
+
         self.initUndo()
         
     def initUndo(self):
@@ -202,4 +205,11 @@ class TreeView(QTreeView):
         if newTxt != oldTxt:
             editCommand = EditCommand(self.model(), index, newTxt, oldTxt)
             self.undoStack.push(editCommand)
+
+    def moveNodeUp(self):
+        indices = self.selectionModel().selectedRows()
+        if len(indices) == 0:
+            indices = [self.currentIndex()]
+        self.model().moveNodesUp(indices)
+    
 
