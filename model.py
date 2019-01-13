@@ -186,3 +186,19 @@ class TreeModel(QAbstractItemModel):
             parent.moveChildUp(row+N_rows-i)
         self.endMoveRows()
         return self.index(row+1, index.column(), parentIndex)
+
+    def moveNodeCtrlShiftRight(self, index):
+        row = index.row()
+        if row == 0:
+            return None
+        parentIndex = index.parent()
+        siblingIndex = index.sibling(row-1, index.column())
+        sibling = self.getItem(siblingIndex)
+        N_children = sibling.childrenCount()
+        self.beginMoveRows(parentIndex, row, row, siblingIndex, N_children)
+        parentItem = self.getItem(parentIndex)
+        item = self.getItem(index)
+        parentItem.removeChild(item)
+        sibling.appendChild(item)
+        self.endMoveRows()
+        return siblingIndex

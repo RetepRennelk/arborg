@@ -55,6 +55,9 @@ class TreeView(QTreeView):
         shortcut = QShortcut(QKeySequence("Shift+Down"), self)
         shortcut.activated.connect(self.moveNodesDown)
 
+        shortcut = QShortcut(QKeySequence("Ctrl+Shift+Right"), self)
+        shortcut.activated.connect(self.ctrlShiftRight)
+
         self.initUndo()
         
     def initUndo(self):
@@ -205,21 +208,28 @@ class TreeView(QTreeView):
             editCommand = EditCommand(self.model(), index, newTxt, oldTxt)
             self.undoStack.push(editCommand)
 
-    def moveNodesUp(self):
+    def verifyAndGetSelectedIndices(self):
         indices = self.selectionModel().selectedRows()
         if len(indices) == 0:
             indices = [self.currentIndex()]
-        N_rows = len(indices)
-        if self.model().areAllParentsIdentical(indices):
+        flag = self.model().areAllParentsIdentical(indices)
+        return flag, indices
+
+    def moveNodesUp(self):
+        flag, indices = self.verifyAndGetSelectedIndices()
+        if flag:
+            N_rows = len(indices)
             moveChildrenUpCommand = MoveChildrenUpCommand(self.model(), indices[0], N_rows)
             self.undoStack.push(moveChildrenUpCommand)
 
     def moveNodesDown(self):
-        indices = self.selectionModel().selectedRows()
-        if len(indices) == 0:
-            indices = [self.currentIndex()]
-        N_rows = len(indices)
-        if self.model().areAllParentsIdentical(indices):
+        flag, indices = self.verifyAndGetSelectedIndices()
+        if flag:
+            N_rows = len(indices)
             moveChildrenDownCommand = MoveChildrenDownCommand(self.model(), indices[0], N_rows)
             self.undoStack.push(moveChildrenDownCommand)
             
+    def ctrlShiftRight(self):
+        siblingIndex = self.model().moveNodeCtrlShiftRight(self.currentIndex())
+        if siblingIndex:
+            self.expand(siblingIndex)

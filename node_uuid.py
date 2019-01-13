@@ -11,6 +11,7 @@ class Node():
 
     def appendChild(self, child):
         self.children.append(child)
+        child.parent = self
     
     def toList(self):
         return [self.id, self.content]
