@@ -39,10 +39,47 @@ class Node():
             self.children[idx], self.children[idx-1] = self.children[idx-1], self.children[idx]
             return True
         return False
-    
 
+    def insertChild(self, child, idx):
+        self.children.insert(idx, child)
+        child.parent = self
+
+    def makeChildrenToGrandChildren(self, pivotChild):
+        '''All siblings below pivotChild will be reparented to pivotChild.
+        '''
+        idx = self.children.index(pivotChild)
+        N_children = self.childrenCount()
+        for _ in range(idx+1, N_children):
+            child = self.children[idx+1]
+            self.removeChild(child)
+            pivotChild.appendChild(child)
+    
+    def makeChildrenToSiblings(self):
+        '''All children will be reparented to parent below this item.
+        '''
+        idx = self.parent.children.index(self)
+        N_children = self.childrenCount()
+        for i in range(N_children):
+            child = self.children[0]
+            self.removeChild(child)
+            self.parent.insertChild(child, idx+i+1)
+    
 if __name__ == '__main__':
-    root = Node(None, ['column', 'comment'])
-    parent1 = Node(root, ['AAA', 'aaa'])
-    parent2 = Node(root, ['BBB', 'bbb'])
-    child1 = Node(parent1, ['CCC', 'ccc'])
+    if 1:
+        root = Node(None, ['column', 'comment'])
+        parent1 = Node(root, ['AAA', 'aaa'])
+        parent2 = Node(root, ['BBB', 'bbb'])
+        child1 = Node(parent2, ['CCC', 'ccc'])
+        child2 = Node(parent2, ['DDD', 'ddd'])
+
+        parent2.makeChildrenToSiblings()
+
+    else:
+        root = Node(None, ['column', 'comment'])
+        parent1 = Node(root, ['AAA', 'aaa'])
+        parent2 = Node(root, ['BBB', 'bbb'])
+        parent3 = Node(root, ['CCC', 'ccc'])
+        parent4 = Node(root, ['DDD', 'ddd'])
+
+        root.makeChildrenToGrandChildren(parent2)
+    print(root)
