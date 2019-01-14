@@ -108,8 +108,10 @@ class TreeView(QTreeView):
         fd.setNameFilter(config.nameFilterString)
         if fd.exec():
             filenames = fd.selectedFiles()
+            # TODO Check if file exists
             self.model().loadFile(filenames[0])
             self.showModelValid()
+            self.expandAll()
 
     def saveFile(self):
         fd = QFileDialog(self)
