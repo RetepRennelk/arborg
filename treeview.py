@@ -7,6 +7,7 @@ from styleditemdelegate import StyledItemDelegate
 from command import EditCommand, DeleteCellCommand, InsertSiblingAboveCommand, \
     InsertSiblingBelowCommand, InsertChildBelowCommand, MoveChildrenUpCommand, \
     MoveChildrenDownCommand
+from pathlib import Path
 
 class TreeView(QTreeView):
     def __init__(self, model):
@@ -111,10 +112,10 @@ class TreeView(QTreeView):
         fd.setNameFilter(config.nameFilterString)
         if fd.exec():
             filenames = fd.selectedFiles()
-            # TODO Check if file exists
-            self.model().loadFile(filenames[0])
-            self.showModelValid()
-            self.expandAll()
+            if Path(filenames[0]).is_file():
+                self.model().loadFile(filenames[0])
+                self.showModelValid()
+                self.expandAll()
 
     def saveFile(self):
         fd = QFileDialog(self)
