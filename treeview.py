@@ -58,6 +58,9 @@ class TreeView(QTreeView):
         shortcut = QShortcut(QKeySequence("Ctrl+Shift+Right"), self)
         shortcut.activated.connect(self.ctrlShiftRight)
 
+        shortcut = QShortcut(QKeySequence("Ctrl+Shift+Left"), self)
+        shortcut.activated.connect(self.ctrlShiftLeft)
+        
         self.initUndo()
         
     def initUndo(self):
@@ -233,5 +236,10 @@ class TreeView(QTreeView):
             
     def ctrlShiftRight(self):
         siblingIndex = self.model().moveNodeCtrlShiftRight(self.currentIndex())
+        if siblingIndex:
+            self.expand(siblingIndex)
+
+    def ctrlShiftLeft(self):
+        siblingIndex = self.model().moveNodeCtrlShiftLeft(self.currentIndex())
         if siblingIndex:
             self.expand(siblingIndex)

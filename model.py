@@ -188,6 +188,7 @@ class TreeModel(QAbstractItemModel):
         return self.index(row+1, index.column(), parentIndex)
 
     def moveNodeCtrlShiftRight(self, index):
+        '''A sibling becomes a parent.'''
         row = index.row()
         if row == 0:
             return None
@@ -202,3 +203,32 @@ class TreeModel(QAbstractItemModel):
         sibling.appendChild(item)
         self.endMoveRows()
         return siblingIndex
+
+    def moveNodeCtrlShiftLeft(self, index):
+        '''A parent becomes a sibling.'''
+        parentIndex = index.parent()
+        parentItem = self.getItem(parentIndex)
+        if parentItem.getParent() is None:
+            return None
+        self.makeSiblingsBelowChildren(index)
+        grandParentIndex = parentIndex.parent()
+        row = index.row()
+        parentRow = parentIndex.row()
+        self.beginMoveRows(parentIndex, row, row, grandParentIndex, parentRow+1)
+        item = self.getItem(index)
+        parentItem.removeChild(item)
+        grandParentitem = self.getItem(grandParentIndex)
+        grandParentitem.insertChild(item, parentRow+1)
+        self.endMoveRows()
+        newIndex = self.index(parentRow+1, 0, grandParentIndex)
+        return newIndex # siblingIndex
+    
+    def makeSiblingsBelowChildren(self, index):
+        item = self.getItem(index)
+        row = index.row()
+        parentIndex = index.parent()
+        parentItem = self.getItem(parentIndex)
+        N_children = parentItem.childrenCount()
+        flag = self.beginMoveRows(parentIndex, row+1, N_children-1, index, item.childrenCount())
+        parentItem.makeChildrenToGrandChildren(item)
+        self.endMoveRows()
