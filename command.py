@@ -131,3 +131,23 @@ class MoveChildrenDownCommand(UndoCommand):
     def redo(self):
         super().redo()
         self.lastEditedIndex = self.model.moveNodesDown(self.index, self.N_rows)
+
+
+class MoveChildrenCtrlRightCommand(UndoCommand):
+    def __init__(self, model, index, treeView):
+        super().__init__(model, index)
+        self.treeView = treeView
+
+    def undo(self):
+        super().undo()
+        item = self.model.getItem(self.lastEditedIndex)
+        self.lastEditedIndex = self.model.moveNodeCtrlShiftLeft(self.lastEditedIndex)
+        self.treeView.expand(self.lastEditedIndex.parent())
+
+    def redo(self):
+        super().redo()
+        self.lastEditedIndex = self.model.moveNodeCtrlShiftRight(self.index)
+        item = self.model.getItem(self.lastEditedIndex)
+        if self.lastEditedIndex:
+            self.treeView.expand(self.lastEditedIndex.parent())
+

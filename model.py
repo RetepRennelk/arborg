@@ -202,7 +202,7 @@ class TreeModel(QAbstractItemModel):
         parentItem.removeChild(item)
         sibling.appendChild(item)
         self.endMoveRows()
-        return siblingIndex
+        return self.index(N_children, index.column(), siblingIndex)
 
     def moveNodeCtrlShiftLeft(self, index):
         '''A parent becomes a sibling.'''
@@ -221,7 +221,7 @@ class TreeModel(QAbstractItemModel):
         grandParentitem.insertChild(item, parentRow+1)
         self.endMoveRows()
         newIndex = self.index(parentRow+1, 0, grandParentIndex)
-        return newIndex # siblingIndex
+        return newIndex
     
     def makeSiblingsBelowChildren(self, index):
         item = self.getItem(index)

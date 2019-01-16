@@ -6,7 +6,7 @@ import config
 from styleditemdelegate import StyledItemDelegate
 from command import EditCommand, DeleteCellCommand, InsertSiblingAboveCommand, \
     InsertSiblingBelowCommand, InsertChildBelowCommand, MoveChildrenUpCommand, \
-    MoveChildrenDownCommand
+    MoveChildrenDownCommand, MoveChildrenCtrlRightCommand
 from pathlib import Path
 
 class TreeView(QTreeView):
@@ -234,7 +234,7 @@ class TreeView(QTreeView):
             N_rows = len(indices)
             moveChildrenDownCommand = MoveChildrenDownCommand(self.model(), indices[0], N_rows)
             self.undoStack.push(moveChildrenDownCommand)
-            
+
     def currentIndexCanBeShiftedRight(self):
         return self.currentIndex().row() > 0
 
@@ -246,9 +246,8 @@ class TreeView(QTreeView):
     def ctrlShiftRight(self):
         if not self.currentIndexCanBeShiftedRight():
             return
-        siblingIndex = self.model().moveNodeCtrlShiftRight(self.currentIndex())
-        if siblingIndex:
-            self.expand(siblingIndex)
+        cmd = MoveChildrenCtrlRightCommand(self.model(), self.currentIndex(), self)
+        self.undoStack.push(cmd)
 
     def ctrlShiftLeft(self):
         if not self.currentIndexCanBeShiftedLeft():
