@@ -235,12 +235,24 @@ class TreeView(QTreeView):
             moveChildrenDownCommand = MoveChildrenDownCommand(self.model(), indices[0], N_rows)
             self.undoStack.push(moveChildrenDownCommand)
             
+    def currentIndexCanBeShiftedRight(self):
+        return self.currentIndex().row() > 0
+
+    def currentIndexCanBeShiftedLeft(self):
+        parentIndex = self.currentIndex().parent()
+        parentItem = self.model().getItem(parentIndex)
+        return parentItem.getParent() is not None
+            
     def ctrlShiftRight(self):
+        if not self.currentIndexCanBeShiftedRight():
+            return
         siblingIndex = self.model().moveNodeCtrlShiftRight(self.currentIndex())
         if siblingIndex:
             self.expand(siblingIndex)
 
     def ctrlShiftLeft(self):
+        if not self.currentIndexCanBeShiftedLeft():
+            return
         siblingIndex = self.model().moveNodeCtrlShiftLeft(self.currentIndex())
         if siblingIndex:
             self.expand(siblingIndex)
